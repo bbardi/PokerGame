@@ -1,4 +1,4 @@
-import { BASE_URL, HTTP } from "../http";
+import { BASE_URL, HTTP} from "../http";
 
 export default {
   login(data) {

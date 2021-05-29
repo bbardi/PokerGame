@@ -17,13 +17,13 @@ public class UserDetailsImpl implements UserDetails {
     private final Long id;
     private final String username;
     private final String email;
-    private final Float balance;
+    private final Long balance;
 
     @JsonIgnore
     private final String password;
     private final Collection<? extends GrantedAuthority> authorities;
 
-    public UserDetailsImpl(Long id, String username, String email, Float balance, String password, Collection<? extends GrantedAuthority> authorities) {
+    public UserDetailsImpl(Long id, String username, String email, Long balance, String password, Collection<? extends GrantedAuthority> authorities) {
         this.id = id;
         this.username = username;
         this.email = email;

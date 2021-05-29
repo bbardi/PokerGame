@@ -28,7 +28,6 @@ public interface UserMapper {
 
     @Named("RoleToString")
     static Set<String> mapRoleToString(Set<Role> value) {
-        new Role();
         return value.stream()
                 .map(role -> role.getName().toString())
                 .collect(Collectors.toSet());

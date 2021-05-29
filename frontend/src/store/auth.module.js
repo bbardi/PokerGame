@@ -37,6 +37,17 @@ export const auth = {
         }
       );
     },
+    updateBalance({ commit },user){
+      return api.payments.getBalance(user).then(
+        (response) => {
+          commit("updateBalance",response.amount)
+          return Promise.resolve();
+        },
+        (error) => {
+          return Promise.reject(error);
+        }
+      )
+    }
   },
   mutations: {
     loginSuccess(state, user) {
@@ -57,13 +68,22 @@ export const auth = {
     registerFailure(state) {
       state.status.loggedIn = false;
     },
+    updateBalance(state, balance) {
+      state.user.balance = balance;
+    }
   },
   getters: {
     isAdmin: (state) => {
       return state.user.roles.includes("ADMINISTRATOR");
     },
+    getUserID: (state) => {
+      return state.user.id;
+    },
     getUsername: (state) => {
       return state.user.username;
-    }
+    },
+    getBalance: (state) => {
+      return state.user.balance;
+    },
   },
 };

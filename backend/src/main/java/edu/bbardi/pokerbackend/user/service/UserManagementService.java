@@ -1,5 +1,6 @@
 package edu.bbardi.pokerbackend.user.service;
 
+import edu.bbardi.pokerbackend.game.model.PlayingUser;
 import edu.bbardi.pokerbackend.user.mapper.UserMapper;
 import edu.bbardi.pokerbackend.user.model.ERole;
 import edu.bbardi.pokerbackend.user.model.Role;
@@ -45,6 +46,15 @@ public class UserManagementService {
         }
     }
 
+    public User findByID(Long id){
+        return userRepository.findById(id)
+                .orElseThrow(()-> new EntityNotFoundException("User not found with id: " + id));
+    }
+    public User findByUsername(String username){
+        return userRepository.findByUsername(username)
+                .orElseThrow(()-> new EntityNotFoundException("User not found with username: " + username));
+    }
+
     public List<UserDTO> findAll() {
         return userRepository.findAll().stream()
                 .map(userMapper::toDto)
@@ -75,5 +85,26 @@ public class UserManagementService {
             actUser.setPassword(passwordEncoder.encode(user.getPassword()));
         }
         return userMapper.toDto(userRepository.save(actUser));
+    }
+
+    public void subtractBalance(Set<PlayingUser> users, Long minimumBalance) {
+        List<User> userList = users.stream()
+                .map(u -> userRepository.findByUsername(u.getName())
+                        .orElseThrow(()-> new EntityNotFoundException("User not found")))
+                .collect(Collectors.toList());
+        for(User user: userList){
+            user.setBalance(user.getBalance() - minimumBalance);
+        }
+        userRepository.saveAll(userList);
+    }
+
+    public void addWinnerBalance(PlayingUser user) {
+        User actUser = findByUsername(user.getName());
+        actUser.setBalance(actUser.getBalance() + user.getInGameBalance());
+        userRepository.save(actUser);
+    }
+
+    public void save(User user) {
+        userRepository.save(user);
     }
 }

@@ -11,11 +11,11 @@ import java.util.List;
 import static edu.bbardi.pokerbackend.UrlMapping.ENTITY;
 import static edu.bbardi.pokerbackend.UrlMapping.USER;
 
-@CrossOrigin(origins = "*", maxAge = 3600)
+@CrossOrigin(originPatterns = "*", maxAge = 3600)
 @RestController
 @RequestMapping(USER)
 @RequiredArgsConstructor
-@PreAuthorize("hasRole('ADMINISTRATOR')")
+@PreAuthorize("hasAuthority('ADMINISTRATOR')")
 public class UserController {
     private final UserManagementService userManagementService;
 

@@ -1,5 +1,11 @@
 package edu.bbardi.pokerbackend;
 
+import edu.bbardi.pokerbackend.game.model.*;
+import edu.bbardi.pokerbackend.game.model.enums.ECardNumber;
+import edu.bbardi.pokerbackend.game.model.enums.ECardSymbol;
+import edu.bbardi.pokerbackend.game.model.enums.ELobbyStatus;
+import edu.bbardi.pokerbackend.game.repository.CardRepository;
+import edu.bbardi.pokerbackend.game.repository.StatusRepository;
 import edu.bbardi.pokerbackend.user.model.ERole;
 import edu.bbardi.pokerbackend.user.model.Role;
 import edu.bbardi.pokerbackend.user.model.User;
@@ -20,8 +26,9 @@ import java.util.Set;
 public class Bootstrapper implements ApplicationListener<ApplicationReadyEvent> {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
+    private final StatusRepository statusRepository;
     private final PasswordEncoder passwordEncoder;
-
+    private final CardRepository cardRepository;
     @Value("${app.bootstrap}")
     private Boolean bootstrap;
 
@@ -35,7 +42,21 @@ public class Bootstrapper implements ApplicationListener<ApplicationReadyEvent> 
                         Role.builder().name(value).build()
                 );
             }
-            roleRepository.flush();
+            for(ELobbyStatus value : ELobbyStatus.values()){
+                statusRepository.save(
+                        LobbyStatus.builder().name(value).build()
+                );
+            }
+            for(ECardSymbol symbol : ECardSymbol.values()){
+                for(ECardNumber number : ECardNumber.values()){
+                    cardRepository.save(
+                            Card.builder()
+                                    .cardNumber(number)
+                                    .cardSymbol(symbol)
+                                    .build()
+                    );
+                }
+            }
             User admin = User.builder()
                     .username("admin")
                     .password(passwordEncoder.encode("admin"))
@@ -43,8 +64,19 @@ public class Bootstrapper implements ApplicationListener<ApplicationReadyEvent> 
                             .orElseThrow(() -> new EntityNotFoundException("Role not found")))
                     )
                     .email("admin@admin.com")
+                    .balance(5L)
+                    .build();
+            User player = User.builder()
+                    .username("player")
+                    .password(passwordEncoder.encode("player"))
+                    .roles(Set.of(roleRepository.findByName(ERole.PLAYER)
+                            .orElseThrow(() -> new EntityNotFoundException("Role not found")))
+                    )
+                    .email("player@player.com")
+                    .balance(5L)
                     .build();
             userRepository.save(admin);
+            userRepository.save(player);
         }
     }
 }

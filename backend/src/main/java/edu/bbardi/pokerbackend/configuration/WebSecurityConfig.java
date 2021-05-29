@@ -1,6 +1,8 @@
-package edu.bbardi.pokerbackend.security;
+package edu.bbardi.pokerbackend.configuration;
 
 
+import edu.bbardi.pokerbackend.security.AuthEntryPointJwt;
+import edu.bbardi.pokerbackend.security.AuthTokenFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,6 +19,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import static edu.bbardi.pokerbackend.UrlMapping.AUTH;
+import static edu.bbardi.pokerbackend.UrlMapping.WEBSOCKET;
 
 @Configuration
 @EnableWebSecurity
@@ -50,6 +53,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .authorizeRequests().antMatchers(AUTH + "/**").permitAll()
                 .antMatchers("/api/test/**").permitAll()
+                .antMatchers(WEBSOCKET+"/**").permitAll()
                 .anyRequest().authenticated();
         http.addFilterBefore(authenticationJwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
     }

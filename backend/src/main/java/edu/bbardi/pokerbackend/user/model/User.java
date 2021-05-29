@@ -38,7 +38,7 @@ public class User {
 
     @Column(nullable = false)
     @Builder.Default
-    private Float balance = 0.0f;
+    private Long balance = 0L;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_roles",
